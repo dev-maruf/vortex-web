@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Nexmo;
 
 class APIController extends Controller
 {
@@ -109,15 +110,11 @@ class APIController extends Controller
 
     public function endpoint(Request $request)
     {
-        if(\App\Topic::where('topic', $request->topic)->count() == 1){
-            \App\Topic::where('topic', $request->topic)->update(['message'=>$request->message]);
-        }
-        else{
-            $topic = new \App\Topic;
-            $topic->topic = $request->topic;
-            $topic->message = $request->message;
-            $topic->save();
-        }
+        Nexmo::message()->send([
+            'to'   => env('SMS_ADDRESS', '6285740101829'),
+            'from' => 'Vortex-Home',
+            'text' => '[Peringatan] Sistem mendeteksi bahwa tombol darurat di Rumah 1 telah ditekan.'
+        ]);
         return "oke";
     }
 }
